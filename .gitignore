@@ -1,0 +1,13 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Data and logs
+*.log
+*.txt
+*.json
+
+# Environment
+.env
+
