@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 START_TOC_URL = "https://www.europarl.europa.eu/doceo/document/PV-10-2025-06-16-TOC_NL.html"
 HF_USERNAME = os.environ.get("HF_USERNAME", "YOUR_HUGGINGFACE_USERNAME")
-HF_DATASET_NAME = "Dutch-European-Parliament-Minutes"
+HF_DATASET_NAME = "EU-Parliament-Minutes-Dutch"
 HF_REPO_ID = f"{HF_USERNAME}/{HF_DATASET_NAME}"
 
 NAMESPACES = {
