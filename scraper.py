@@ -9,9 +9,10 @@ from datasets import Dataset
 from huggingface_hub import HfApi, login
 from tqdm import tqdm
 
-START_TOC_URL = "https://www.europarl.europa.eu/doceo/document/PV-10-2025-06-16-TOC_NL.html"
+# Start from the first available minutes page and follow "Volgende" links
+START_TOC_URL = "https://www.europarl.europa.eu/doceo/document/PV-5-2003-05-12-TOC_NL.html"
 HF_USERNAME = os.environ.get("HF_USERNAME", "YOUR_HUGGINGFACE_USERNAME")
-HF_DATASET_NAME = "EU-Parliament-Minutes-Dutch"
+HF_DATASET_NAME = "Dutch-European-Parliament-Minutes"
 HF_REPO_ID = f"{HF_USERNAME}/{HF_DATASET_NAME}"
 
 NAMESPACES = {
@@ -33,15 +34,10 @@ def collect_minutes_urls(start_url: str):
         soup = BeautifulSoup(resp.text, "lxml")
         minutes_url = current.replace("-TOC_NL.html", "_NL.xml")
         urls.append(minutes_url)
-
-        prev_link = soup.find("a", title="Vorige")
-        if not prev_link or not prev_link.get("href"):
+        next_link = soup.find("a", title="Volgende")
+        if not next_link or not next_link.get("href"):
             break
-        next_url = urljoin(current, prev_link["href"])
-        match = re.search(r"PV-(\d+)-", next_url)
-        if match and int(match.group(1)) < 6:
-            break
-        current = next_url
+        current = urljoin(current, next_link["href"])
     return urls
 
 

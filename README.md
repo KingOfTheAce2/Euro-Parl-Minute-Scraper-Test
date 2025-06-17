@@ -2,7 +2,7 @@
 
 This repository contains a simple Python script to scrape the Dutch minutes of the European Parliament and upload them to the Hugging Face Hub.
 
-The crawler starts from a specific table of contents page and walks backwards using the "Vorige" link until it reaches parliamentary term 6. Each minutes page is downloaded, cleaned and pushed as a dataset.
+The crawler starts from the earliest available minutes page and walks forward using the "Volgende" link. Each minutes page is downloaded in XML format, cleaned, and pushed as a dataset.
 
 ## Requirements
 
