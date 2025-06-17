@@ -35,6 +35,8 @@ def collect_minutes_urls(start_url: str):
         minutes_url = current.replace("-TOC_NL.html", "_NL.xml")
         urls.append(minutes_url)
         next_link = soup.find("a", title="Volgende")
+        if not next_link:
+            next_link = soup.find("a", string=re.compile("Volgende", re.I))
         if not next_link or not next_link.get("href"):
             break
         current = urljoin(current, next_link["href"])
@@ -123,8 +125,26 @@ def extract_dutch_text_from_xml(xml_content: bytes) -> str | None:
     return None
 
 
+def extract_dutch_text_from_html(html_content: str) -> str | None:
+    """Parse HTML minutes and return cleaned Dutch text."""
+    soup = BeautifulSoup(html_content, "lxml")
+    paragraphs = [
+        p.get_text(" ", strip=True) for p in soup.find_all("p") if p.get_text(strip=True)
+    ]
+    final_text = clean_text("\n".join(paragraphs))
+    if final_text and len(final_text) > 50:
+        return final_text
+    return None
+
+
 def fetch_minutes_text(url: str, session: requests.Session) -> str | None:
     resp = session.get(url, timeout=20)
+    if resp.status_code == 404 and url.endswith("_NL.xml"):
+        # Older minutes might only be available in HTML format
+        html_url = url.replace("_NL.xml", "_NL.html")
+        resp = session.get(html_url, timeout=20)
+        resp.raise_for_status()
+        return extract_dutch_text_from_html(resp.text)
     resp.raise_for_status()
     return extract_dutch_text_from_xml(resp.content)
 
