@@ -34,7 +34,6 @@ def collect_minutes_urls(start_url: str):
         soup = BeautifulSoup(resp.text, "lxml")
         minutes_url = current.replace("-TOC_NL.html", "_NL.xml")
         urls.append(minutes_url)
-
         next_link = soup.find("a", title="Volgende")
         if not next_link or not next_link.get("href"):
             break
